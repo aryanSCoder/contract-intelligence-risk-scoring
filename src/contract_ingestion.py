@@ -15,6 +15,33 @@ DEFAULT_OUTPUT_DIR = (
 )
 
 
+def repair_pdf_encoding(text: str) -> str:
+    """
+    Repair common encoding artifacts produced by PDF text extraction.
+
+    This is intentionally conservative so that normal UTF-8 text
+    is not unnecessarily re-encoded.
+    """
+
+    replacements = {
+        "â€œ": '"',
+        "â€": '"',
+        "â€™": "'",
+        "â€˜": "'",
+        "â€“": "–",
+        "â€”": "—",
+        "â€¦": "...",
+        "Â®": "®",
+        "Â©": "©",
+        "Â": "",
+    }
+
+    for bad, good in replacements.items():
+        text = text.replace(bad, good)
+
+    return text
+
+
 def extract_text_from_pdf(pdf_path: Path) -> tuple[str, int, int]:
     """
     Extract text using pypdf.
@@ -35,10 +62,15 @@ def extract_text_from_pdf(pdf_path: Path) -> tuple[str, int, int]:
         start=1,
     ):
         text = page.extract_text() or ""
+
+        # Repair common PDF extraction encoding artifacts.
+        text = repair_pdf_encoding(text)
+
         text = text.strip()
 
         if text:
             pages_with_text += 1
+
             pages.append(
                 f"[PAGE {page_number}]\n{text}"
             )
@@ -57,7 +89,9 @@ def extract_text_from_pdf(pdf_path: Path) -> tuple[str, int, int]:
     )
 
 
-def extract_text_with_ocr(pdf_path: Path) -> tuple[str, int]:
+def extract_text_with_ocr(
+    pdf_path: Path,
+) -> tuple[str, int]:
     """
     OCR fallback for scanned/image-only PDFs.
 
@@ -71,10 +105,11 @@ def extract_text_with_ocr(pdf_path: Path) -> tuple[str, int]:
     try:
         from pdf2image import convert_from_path
         import pytesseract
+
     except ImportError as exc:
         raise RuntimeError(
-            "OCR dependencies are missing. Install "
-            "pdf2image and pytesseract."
+            "OCR dependencies are missing. "
+            "Install pdf2image and pytesseract."
         ) from exc
 
     try:
@@ -82,11 +117,12 @@ def extract_text_with_ocr(pdf_path: Path) -> tuple[str, int]:
             str(pdf_path),
             dpi=200,
         )
+
     except Exception as exc:
         raise RuntimeError(
             "PDF-to-image conversion failed. "
-            "Make sure Poppler is installed and "
-            "available on PATH."
+            "Make sure Poppler is installed "
+            "and available on PATH."
         ) from exc
 
     pages = []
@@ -98,6 +134,8 @@ def extract_text_with_ocr(pdf_path: Path) -> tuple[str, int]:
         text = pytesseract.image_to_string(
             image
         ).strip()
+
+        text = repair_pdf_encoding(text)
 
         if text:
             pages.append(
@@ -173,15 +211,27 @@ def save_outputs(
     print("=" * 60)
     print("PDF INGESTION REPORT")
     print("=" * 60)
-    print(f"File              : {pdf_path.name}")
-    print(f"Pages             : {page_count}")
-    print(f"Pages with text   : {extracted_pages}")
-    print(f"Characters        : {len(text)}")
+    print(
+        f"File              : {pdf_path.name}"
+    )
+    print(
+        f"Pages             : {page_count}"
+    )
+    print(
+        f"Pages with text   : {extracted_pages}"
+    )
+    print(
+        f"Characters        : {len(text)}"
+    )
     print(
         f"Extraction method : {extraction_method}"
     )
-    print(f"Text output       : {text_path}")
-    print(f"Metadata output   : {metadata_path}")
+    print(
+        f"Text output       : {text_path}"
+    )
+    print(
+        f"Metadata output   : {metadata_path}"
+    )
     print(
         "Status            : "
         + (
@@ -221,15 +271,19 @@ def process_pdf(
     # If no pages contain extractable text,
     # use OCR as a fallback.
     if pages_with_text == 0:
+
         print(
             "No extractable text detected."
         )
+
         print(
             "Switching to OCR fallback..."
         )
 
         text, page_count = (
-            extract_text_with_ocr(pdf_path)
+            extract_text_with_ocr(
+                pdf_path
+            )
         )
 
         extracted_pages = sum(
@@ -279,7 +333,10 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    pdf_path = Path(args.pdf).resolve()
+    pdf_path = Path(
+        args.pdf
+    ).resolve()
+
     output_dir = Path(
         args.output_dir
     ).resolve()
