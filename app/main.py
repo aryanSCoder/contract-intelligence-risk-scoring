@@ -5,9 +5,11 @@ import subprocess
 import sys
 import uuid
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -61,6 +63,25 @@ app.add_middleware(
 )
 
 
+# -------------------------------------------------------------------
+# Frontend configuration
+# -------------------------------------------------------------------
+
+app.mount(
+    "/static",
+    StaticFiles(directory=str(BASE_DIR / "app" / "static")),
+    name="static",
+)
+
+templates = Jinja2Templates(
+    directory=str(BASE_DIR / "app" / "templates")
+)
+
+
+# -------------------------------------------------------------------
+# Utility
+# -------------------------------------------------------------------
+
 def load_json(path: Path):
     if not path.exists():
         raise FileNotFoundError(
@@ -71,8 +92,25 @@ def load_json(path: Path):
         return json.load(file)
 
 
-@app.get("/")
-def root():
+# -------------------------------------------------------------------
+# Frontend
+# -------------------------------------------------------------------
+
+@app.get("/", response_class=HTMLResponse)
+async def dashboard(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={"request": request},
+    )
+
+
+# -------------------------------------------------------------------
+# API
+# -------------------------------------------------------------------
+
+@app.get("/api")
+def api_root():
     return {
         "project": "AI-Powered Contract Intelligence & Risk Scoring",
         "status": "running",
@@ -83,6 +121,8 @@ def root():
             "analyze": "/analyze-contract",
             "report": "/risk-report",
             "clauses": "/detected-clauses",
+            "risk_details": "/risk-details",
+            "download": "/download-report",
             "docs": "/docs",
         },
     }
@@ -98,6 +138,7 @@ def health():
 
 @app.post("/upload-contract")
 async def upload_contract(file: UploadFile = File(...)):
+
     if not file.filename:
         raise HTTPException(
             status_code=400,
@@ -112,10 +153,7 @@ async def upload_contract(file: UploadFile = File(...)):
             detail="Only PDF contract files are currently supported.",
         )
 
-    safe_name = (
-        f"{uuid.uuid4().hex}"
-        f"{extension}"
-    )
+    safe_name = f"{uuid.uuid4().hex}.pdf"
 
     destination = UPLOAD_DIR / safe_name
 
@@ -142,6 +180,7 @@ async def upload_contract(file: UploadFile = File(...)):
 
 @app.post("/analyze-contract")
 async def analyze_contract(file: UploadFile = File(...)):
+
     if not file.filename:
         raise HTTPException(
             status_code=400,
@@ -157,16 +196,25 @@ async def analyze_contract(file: UploadFile = File(...)):
         )
 
     safe_name = f"{uuid.uuid4().hex}.pdf"
+
     destination = UPLOAD_DIR / safe_name
 
     try:
+
+        # -----------------------------------------------------------
+        # Save uploaded PDF
+        # -----------------------------------------------------------
+
         with destination.open("wb") as output:
             shutil.copyfileobj(
                 file.file,
                 output,
             )
 
-        # Run the existing contract-analysis pipeline.
+        # -----------------------------------------------------------
+        # Contract ingestion
+        # -----------------------------------------------------------
+
         ingestion_result = subprocess.run(
             [
                 sys.executable,
@@ -188,7 +236,10 @@ async def analyze_contract(file: UploadFile = File(...)):
                 },
             )
 
-        # Run clause detection.
+        # -----------------------------------------------------------
+        # Clause detection
+        # -----------------------------------------------------------
+
         clause_result = subprocess.run(
             [
                 sys.executable,
@@ -209,7 +260,10 @@ async def analyze_contract(file: UploadFile = File(...)):
                 },
             )
 
-        # Run risk scoring.
+        # -----------------------------------------------------------
+        # Risk scoring
+        # -----------------------------------------------------------
+
         risk_result = subprocess.run(
             [
                 sys.executable,
@@ -230,7 +284,10 @@ async def analyze_contract(file: UploadFile = File(...)):
                 },
             )
 
-        # Build final combined report.
+        # -----------------------------------------------------------
+        # Final combined report
+        # -----------------------------------------------------------
+
         analysis_result = subprocess.run(
             [
                 sys.executable,
@@ -250,6 +307,10 @@ async def analyze_contract(file: UploadFile = File(...)):
                     "output": analysis_result.stdout,
                 },
             )
+
+        # -----------------------------------------------------------
+        # Load final report
+        # -----------------------------------------------------------
 
         report = load_json(REPORT_FILE)
 
@@ -271,6 +332,7 @@ async def analyze_contract(file: UploadFile = File(...)):
 
 @app.get("/risk-report")
 def risk_report():
+
     try:
         report = load_json(REPORT_FILE)
 
@@ -285,6 +347,7 @@ def risk_report():
 
 @app.get("/detected-clauses")
 def detected_clauses():
+
     try:
         clauses = load_json(CLAUSE_FILE)
 
@@ -299,6 +362,7 @@ def detected_clauses():
 
 @app.get("/risk-details")
 def risk_details():
+
     try:
         risk = load_json(RISK_FILE)
 
@@ -313,6 +377,7 @@ def risk_details():
 
 @app.get("/download-report")
 def download_report():
+
     if not REPORT_FILE.exists():
         raise HTTPException(
             status_code=404,

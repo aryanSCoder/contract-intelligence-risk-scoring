@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contract Intelligence & Risk Scoring</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="topbar">
+        <div>
+            <h1>Contract Intelligence</h1>
+            <p>AI-Powered Contract Analysis & Risk Scoring</p>
+        </div>
+
+        <a href="/docs" target="_blank" class="api-button">
+            API Docs
+        </a>
+    </header>
+
+
+    <!-- Main Container -->
+    <main class="container">
+
+        <!-- Upload Card -->
+        <section class="upload-card">
+
+            <div class="upload-icon">
+                📄
+            </div>
+
+            <h2>Analyze Your Contract</h2>
+
+            <p class="upload-description">
+                Upload a PDF contract to automatically detect clauses,
+                identify potential risks and generate an explainable
+                risk assessment.
+            </p>
+
+            <label for="contractFile" class="file-label">
+                Choose PDF Contract
+            </label>
+
+            <input
+                type="file"
+                id="contractFile"
+                accept=".pdf"
+                hidden
+            >
+
+            <div id="fileName" class="file-name">
+                No file selected
+            </div>
+
+            <button
+                id="analyzeButton"
+                class="analyze-button"
+                disabled
+            >
+                Analyze Contract
+            </button>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <span>Analyzing contract...</span>
+            </div>
+
+            <div id="errorMessage" class="error-message hidden"></div>
+
+        </section>
+
+
+        <!-- Results -->
+        <section id="results" class="results hidden">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Contract Analysis</h2>
+                    <p id="analyzedFile"></p>
+                </div>
+            </div>
+
+
+            <!-- Summary Cards -->
+            <div class="summary-grid">
+
+                <div class="summary-card risk-score-card">
+                    <span class="card-label">Risk Score</span>
+                    <strong id="riskScore">--</strong>
+                    <span class="card-subtitle">out of 100</span>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-label">Risk Level</span>
+                    <strong id="riskLevel">--</strong>
+                    <span class="card-subtitle">Overall assessment</span>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-label">Clauses Detected</span>
+                    <strong id="clauseCount">--</strong>
+                    <span class="card-subtitle">Total detections</span>
+                </div>
+
+                <div class="summary-card">
+                    <span class="card-label">Clause Types</span>
+                    <strong id="uniqueClauseCount">--</strong>
+                    <span class="card-subtitle">Unique categories</span>
+                </div>
+
+            </div>
+
+
+            <!-- Risk Assessment -->
+            <section class="panel">
+
+                <div class="panel-header">
+                    <h3>Risk Assessment</h3>
+                </div>
+
+                <div id="riskFactors" class="risk-factors"></div>
+
+            </section>
+
+
+            <!-- Detected Clauses -->
+            <section class="panel">
+
+                <div class="panel-header">
+                    <h3>Detected Clauses</h3>
+                </div>
+
+                <div id="detectedClauses" class="clauses-container"></div>
+
+            </section>
+
+
+            <!-- Download -->
+            <section class="download-section">
+
+                <button
+                    id="downloadButton"
+                    class="download-button"
+                >
+                    Download Analysis Report
+                </button>
+
+            </section>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            AI-Powered Contract Intelligence & Risk Scoring
+        </p>
+        <span>
+            NLP • Clause Detection • Explainable Risk Analysis
+        </span>
+    </footer>
+
+
+    <script src="/static/script.js"></script>
+
+</body>
+</html>
