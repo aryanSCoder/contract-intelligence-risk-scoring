@@ -297,7 +297,7 @@ def main():
     print_report(report)
 
     print()
-    print("✅ Risk scoring completed successfully.")
+    print(" Risk scoring completed successfully.")
 
 
 if __name__ == "__main__":

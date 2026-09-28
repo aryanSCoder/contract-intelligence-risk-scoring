@@ -397,7 +397,7 @@ def main():
     print_summary(detections)
 
     print()
-    print("✅ Clause detection completed successfully.")
+    print("Clause detection completed successfully.")
 
 
 if __name__ == "__main__":
