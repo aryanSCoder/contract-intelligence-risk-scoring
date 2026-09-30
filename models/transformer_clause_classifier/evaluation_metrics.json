@@ -1,0 +1,9 @@
+{
+  "model": "google/bert_uncased_L-2_H-128_A-2",
+  "evaluation_samples": 500,
+  "classes": 40,
+  "accuracy": 0.248,
+  "precision_weighted": 0.07653215503578119,
+  "recall_weighted": 0.248,
+  "f1_weighted": 0.11136352964194873
+}

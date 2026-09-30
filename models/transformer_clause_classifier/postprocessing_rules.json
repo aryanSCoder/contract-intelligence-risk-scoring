@@ -1,0 +1,55 @@
+{
+  "rule_count": 11,
+  "rules": {
+    "Governing Law": [
+      "governing law",
+      "laws of",
+      "jurisdiction"
+    ],
+    "Termination": [
+      "terminate",
+      "termination",
+      "expiration"
+    ],
+    "Confidentiality": [
+      "confidential",
+      "non.?disclosure"
+    ],
+    "Insurance": [
+      "insurance",
+      "insured",
+      "coverage"
+    ],
+    "Exclusivity": [
+      "exclusive",
+      "exclusivity"
+    ],
+    "License Grant": [
+      "license",
+      "licence"
+    ],
+    "Audit Rights": [
+      "audit",
+      "inspection rights"
+    ],
+    "Anti-Assignment": [
+      "assign",
+      "assignment"
+    ],
+    "Indemnification": [
+      "indemnif"
+    ],
+    "Cap On Liability": [
+      "limitation of liability",
+      "liability shall not exceed",
+      "maximum liability"
+    ],
+    "Warranty": [
+      "warrant",
+      "warranty"
+    ]
+  },
+  "confidence_adjustment": "+0.15",
+  "maximum_confidence": 0.99,
+  "purpose": "Use clause-specific keyword patterns to refine transformer predictions and confidence."
+}
