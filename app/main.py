@@ -4,6 +4,10 @@ import shutil
 import subprocess
 import sys
 import uuid
+from pydantic import BaseModel, Field
+from src.search_contract import search
+import hashlib
+from datetime import datetime, timezone
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +19,10 @@ from fastapi.templating import Jinja2Templates
 BASE_DIR = Path(__file__).resolve().parents[1]
 
 UPLOAD_DIR = BASE_DIR / "data" / "processed" / "uploads"
+
+class SearchRequest(BaseModel):
+    query: str = Field(..., min_length=2, description="Natural-language contract search query")
+    top_k: int = Field(default=5, ge=1, le=10, description="Number of results to return")
 
 REPORT_FILE = (
     BASE_DIR
@@ -92,6 +100,34 @@ def load_json(path: Path):
         return json.load(file)
 
 
+def get_file_metadata(file_path: Path):
+    """Return metadata for a saved contract PDF."""
+
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="Uploaded contract not found."
+        )
+
+    sha256_hash = hashlib.sha256()
+
+    with file_path.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            sha256_hash.update(chunk)
+
+    stats = file_path.stat()
+
+    return {
+        "stored_filename": file_path.name,
+        "file_size_bytes": stats.st_size,
+        "file_size_kb": round(stats.st_size / 1024, 2),
+        "sha256": sha256_hash.hexdigest(),
+        "last_modified_utc": datetime.fromtimestamp(
+            stats.st_mtime,
+            tz=timezone.utc
+        ).isoformat()
+    }
+
 # -------------------------------------------------------------------
 # Frontend
 # -------------------------------------------------------------------
@@ -124,7 +160,22 @@ def api_root():
             "risk_details": "/risk-details",
             "download": "/download-report",
             "docs": "/docs",
+            "search": "/search",
+            "contract_metadata": "/contract-metadata/{stored_filename}",
         },
+    }
+
+@app.post("/search")
+async def semantic_search(request: SearchRequest):
+    results = search(
+        query=request.query,
+        top_k=request.top_k
+    )
+
+    return {
+        "query": request.query,
+        "results": results,
+        "count": len(results)
     }
 
 
@@ -174,7 +225,28 @@ async def upload_contract(file: UploadFile = File(...)):
         "message": "Contract uploaded successfully.",
         "original_filename": file.filename,
         "stored_filename": safe_name,
-        "path": str(destination),
+        "metadata": get_file_metadata(destination)
+    }
+
+@app.get("/contract-metadata/{stored_filename}")
+def contract_metadata(stored_filename: str):
+    """Retrieve metadata for a previously uploaded contract."""
+
+    # Only allow a filename, not a directory path.
+    if (
+        not stored_filename
+        or Path(stored_filename).name != stored_filename
+        or not stored_filename.lower().endswith(".pdf")
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid stored PDF filename."
+        )
+
+    file_path = UPLOAD_DIR / stored_filename
+
+    return {
+        "metadata": get_file_metadata(file_path)
     }
 
 
@@ -388,4 +460,4 @@ def download_report():
         path=REPORT_FILE,
         filename="contract_analysis_report.json",
         media_type="application/json",
-    )
+    )    
