@@ -301,6 +301,200 @@ body {
 
 
 /* -------------------------------------------------------
+   Semantic Search
+------------------------------------------------------- */
+
+.search-panel {
+    margin-top: 30px;
+}
+
+.search-description {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.search-box {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    outline: none;
+    background: rgba(15, 23, 42, 0.8);
+    color: var(--text);
+    font-size: 15px;
+    transition: 0.2s ease;
+}
+
+.search-input::placeholder {
+    color: #64748b;
+}
+
+.search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.08);
+}
+
+.search-select {
+    min-width: 130px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    outline: none;
+    background: rgba(15, 23, 42, 0.8);
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.search-select:focus {
+    border-color: var(--accent);
+}
+
+.search-button {
+    min-width: 105px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent-dark)
+    );
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.search-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2);
+}
+
+.search-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.search-loading {
+    margin-top: 18px;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    background: rgba(56, 189, 248, 0.06);
+    color: var(--accent);
+    font-size: 14px;
+}
+
+.search-error {
+    margin-top: 15px;
+    padding: 13px 15px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.10);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    font-size: 14px;
+}
+
+.search-results {
+    margin-top: 22px;
+}
+
+.search-result-summary {
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.search-result-card {
+    margin-bottom: 12px;
+    padding: 18px;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: 0.2s ease;
+}
+
+.search-result-card:last-child {
+    margin-bottom: 0;
+}
+
+.search-result-card:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+    transform: translateY(-1px);
+}
+
+.search-result-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.search-result-rank {
+    min-width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.search-result-title {
+    flex: 1;
+    min-width: 0;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+.search-result-score {
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: rgba(34, 197, 94, 0.10);
+    color: #86efac;
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.search-result-text {
+    padding: 12px 14px;
+    border-left: 3px solid var(--accent);
+    border-radius: 0 7px 7px 0;
+    background: rgba(56, 189, 248, 0.05);
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.search-empty {
+    padding: 25px;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+
+/* -------------------------------------------------------
    Risk Factors
 ------------------------------------------------------- */
 
@@ -446,6 +640,22 @@ footer span {
     .clauses-container {
         grid-template-columns: 1fr;
     }
+
+    .search-box {
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        flex-basis: 100%;
+    }
+
+    .search-select {
+        flex: 1;
+    }
+
+    .search-button {
+        flex: 1;
+    }
 }
 
 
@@ -484,5 +694,32 @@ footer span {
     .risk-item-header {
         flex-direction: column;
         gap: 8px;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-input,
+    .search-select,
+    .search-button {
+        width: 100%;
+        flex: none;
+    }
+
+    .search-result-header {
+        align-items: flex-start;
+    }
+
+    .search-result-score {
+        margin-left: auto;
+    }
+
+    .search-result-title {
+        font-size: 14px;
+    }
+
+    .search-result-text {
+        font-size: 12px;
     }
 }

@@ -20,6 +20,19 @@ const downloadButton = document.getElementById("downloadButton");
 
 
 /* -------------------------------------------------------
+   Semantic Search Elements
+------------------------------------------------------- */
+
+const searchQuery = document.getElementById("searchQuery");
+const searchTopK = document.getElementById("searchTopK");
+const searchButton = document.getElementById("searchButton");
+
+const searchLoading = document.getElementById("searchLoading");
+const searchError = document.getElementById("searchError");
+const searchResults = document.getElementById("searchResults");
+
+
+/* -------------------------------------------------------
    File Selection
 ------------------------------------------------------- */
 
@@ -342,6 +355,280 @@ function renderDetectedClauses(clauses) {
 
         detectedClauses.appendChild(clauseElement);
     });
+}
+
+
+/* -------------------------------------------------------
+   Semantic Contract Search
+------------------------------------------------------- */
+
+if (searchButton) {
+
+    searchButton.addEventListener("click", performSemanticSearch);
+}
+
+
+if (searchQuery) {
+
+    searchQuery.addEventListener("keydown", (event) => {
+
+        if (event.key === "Enter") {
+            performSemanticSearch();
+        }
+    });
+}
+
+
+/* -------------------------------------------------------
+   Perform Semantic Search
+------------------------------------------------------- */
+
+async function performSemanticSearch() {
+
+    if (!searchQuery || !searchButton) {
+        return;
+    }
+
+    const query = searchQuery.value.trim();
+
+    if (!query) {
+        showSearchError(
+            "Please enter a question or search query."
+        );
+        return;
+    }
+
+    if (query.length < 2) {
+        showSearchError(
+            "Search query must contain at least 2 characters."
+        );
+        return;
+    }
+
+    const topK = Number(searchTopK?.value || 5);
+
+    setSearchLoading(true);
+    hideSearchError();
+
+    searchResults.innerHTML = "";
+
+    try {
+
+        const response = await fetch("/search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                query: query,
+                top_k: topK
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            let message = "Semantic search failed.";
+
+            if (data.detail) {
+
+                if (typeof data.detail === "string") {
+                    message = data.detail;
+                } else if (data.detail.error) {
+                    message = data.detail.error;
+                }
+            }
+
+            throw new Error(message);
+        }
+
+        renderSearchResults(data);
+
+    } catch (error) {
+
+        console.error("Semantic search error:", error);
+
+        showSearchError(
+            error.message ||
+            "Something went wrong while searching the contract."
+        );
+
+    } finally {
+
+        setSearchLoading(false);
+    }
+}
+
+
+/* -------------------------------------------------------
+   Render Semantic Search Results
+------------------------------------------------------- */
+
+function renderSearchResults(data) {
+
+    searchResults.innerHTML = "";
+
+    if (
+        !data ||
+        !Array.isArray(data.results) ||
+        data.results.length === 0
+    ) {
+
+        searchResults.innerHTML = `
+            <div class="search-empty">
+                No relevant contract sections were found.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    const heading = document.createElement("div");
+
+    heading.className = "search-result-summary";
+
+    heading.textContent =
+        `Found ${data.results.length} relevant section${
+            data.results.length === 1 ? "" : "s"
+        }`;
+
+    searchResults.appendChild(heading);
+
+
+    data.results.forEach((result, index) => {
+
+        const resultElement =
+            document.createElement("div");
+
+        resultElement.className =
+            "search-result-card";
+
+
+        const rank =
+            index + 1;
+
+        const score =
+            Number(result.score ?? 0);
+
+
+        const scoreText =
+            score.toFixed(4);
+
+
+        const section =
+            result.section_title ||
+            result.section ||
+            result.title ||
+            "Contract Section";
+
+
+        const text =
+            result.text ||
+            result.content ||
+            result.section_text ||
+            "";
+
+
+        resultElement.innerHTML = `
+            <div class="search-result-header">
+
+                <div class="search-result-rank">
+                    #${rank}
+                </div>
+
+                <div class="search-result-title">
+                    ${escapeHtml(section)}
+                </div>
+
+                <div class="search-result-score">
+                    ${escapeHtml(scoreText)}
+                </div>
+
+            </div>
+
+            ${
+                text
+                    ? `
+                    <div class="search-result-text">
+                        ${escapeHtml(text)}
+                    </div>
+                    `
+                    : ""
+            }
+        `;
+
+
+        searchResults.appendChild(resultElement);
+    });
+
+
+    searchResults.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+}
+
+
+/* -------------------------------------------------------
+   Search Loading State
+------------------------------------------------------- */
+
+function setSearchLoading(isLoading) {
+
+    if (!searchLoading || !searchButton) {
+        return;
+    }
+
+    if (isLoading) {
+
+        searchLoading.classList.remove("hidden");
+
+        searchButton.disabled = true;
+
+        searchButton.textContent =
+            "Searching...";
+
+    } else {
+
+        searchLoading.classList.add("hidden");
+
+        searchButton.disabled = false;
+
+        searchButton.textContent =
+            "Search";
+    }
+}
+
+
+/* -------------------------------------------------------
+   Search Error Handling
+------------------------------------------------------- */
+
+function showSearchError(message) {
+
+    if (!searchError) {
+        return;
+    }
+
+    searchError.textContent =
+        message;
+
+    searchError.classList.remove("hidden");
+}
+
+
+function hideSearchError() {
+
+    if (!searchError) {
+        return;
+    }
+
+    searchError.textContent =
+        "";
+
+    searchError.classList.add("hidden");
 }
 
 
