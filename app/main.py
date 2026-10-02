@@ -8,12 +8,23 @@ from pydantic import BaseModel, Field
 from src.search_contract import search
 import hashlib
 from datetime import datetime, timezone
+import logging
 
 from fastapi import FastAPI, File, HTTPException, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
+from app.config import settings
+
+
+logging.basicConfig(
+    level=getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO),
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+)
+
+logger = logging.getLogger("contract-intelligence")
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -53,14 +64,25 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 
 app = FastAPI(
-    title="AI-Powered Contract Intelligence & Risk Scoring API",
-    description=(
-        "API for contract clause detection, "
-        "risk scoring and explainable contract analysis."
-    ),
-    version="1.0.0",
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION,
+    description="AI-powered contract analysis, clause detection, risk scoring, and semantic search."
 )
 
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info("%s %s", request.method, request.url.path)
+
+    response = await call_next(request)
+
+    logger.info(
+        "%s %s -> %s",
+        request.method,
+        request.url.path,
+        response.status_code
+    )
+
+    return response
 
 app.add_middleware(
     CORSMiddleware,
