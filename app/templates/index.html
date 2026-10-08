@@ -1,242 +1,585 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Contract AI | Intelligence & Risk Scoring</title>
 
-<title>Contract Intelligence & Risk Scoring</title>
-
-<link rel="stylesheet" href="/static/style.css">
-
-
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
 
+    <!-- Background Effects -->
+    <div class="background-grid"></div>
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
 
-<!-- Header -->
-<header class="topbar">
-    <div>
-        <h1>Contract Intelligence</h1>
-        <p>AI-Powered Contract Analysis & Risk Scoring</p>
-    </div>
+    <!-- Header -->
+    <header class="topbar">
 
-    <a href="/docs" target="_blank" class="api-button">
-        API Docs
-    </a>
-</header>
+        <div class="brand">
 
+            <div class="brand-logo">
+                ⚡
+            </div>
 
-<!-- Main Container -->
-<main class="container">
-
-    <!-- Upload Card -->
-    <section class="upload-card">
-
-        <div class="upload-icon">
-            📄
-        </div>
-
-        <h2>Analyze Your Contract</h2>
-
-        <p class="upload-description">
-            Upload a PDF contract to automatically detect clauses,
-            identify potential risks and generate an explainable
-            risk assessment.
-        </p>
-
-        <label for="contractFile" class="file-label">
-            Choose PDF Contract
-        </label>
-
-        <input
-            type="file"
-            id="contractFile"
-            accept=".pdf"
-            hidden
-        >
-
-        <div id="fileName" class="file-name">
-            No file selected
-        </div>
-
-        <button
-            id="analyzeButton"
-            class="analyze-button"
-            disabled
-        >
-            Analyze Contract
-        </button>
-
-        <div id="loading" class="loading hidden">
-            <div class="spinner"></div>
-            <span>Analyzing contract...</span>
-        </div>
-
-        <div id="errorMessage" class="error-message hidden"></div>
-
-    </section>
-
-
-    <!-- Semantic Search -->
-    <section class="panel search-panel">
-
-        <div class="panel-header">
             <div>
-                <h3>🔎 Semantic Contract Search</h3>
-                <p class="search-description">
-                    Ask a natural-language question and find the most
-                    relevant sections of the contract.
+                <h1>Contract<span>AI</span></h1>
+
+                <p>
+                    Intelligence & Risk Scoring Platform
                 </p>
             </div>
+
         </div>
 
-        <div class="search-box">
+        <div class="header-actions">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Operational
+            </div>
+
+            <a
+                href="/docs"
+                target="_blank"
+                class="api-button"
+            >
+                <span>⌘</span>
+                API Docs
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- Main -->
+    <main class="container">
+
+
+        <!-- Hero -->
+        <section class="hero">
+
+            <div class="hero-badge">
+                <span>✦</span>
+                AI-POWERED CONTRACT INTELLIGENCE
+            </div>
+
+            <h2>
+                Analyze contracts.
+                <span>Understand risk.</span>
+            </h2>
+
+            <p>
+                Upload a contract and let AI detect clauses, identify
+                potential risks, search contract meaning and generate
+                an explainable risk assessment.
+            </p>
+
+        </section>
+
+
+        <!-- Upload -->
+        <section class="upload-card">
+
+            <div class="upload-icon">
+                <div class="upload-icon-inner">
+                    📄
+                </div>
+            </div>
+
+            <div class="upload-content">
+
+                <h2>
+                    Upload your contract
+                </h2>
+
+                <p class="upload-description">
+                    Drop a PDF contract here or select a file from
+                    your computer to begin AI analysis.
+                </p>
+
+            </div>
+
+
+            <label
+                for="contractFile"
+                class="file-label"
+            >
+                <span>＋</span>
+                Choose PDF Contract
+            </label>
 
             <input
-                type="text"
-                id="searchQuery"
-                class="search-input"
-                placeholder="e.g. Who owns the intellectual property?"
-                autocomplete="off"
+                type="file"
+                id="contractFile"
+                accept=".pdf"
+                hidden
             >
 
-            <select
-                id="searchTopK"
-                class="search-select"
-                aria-label="Number of search results"
+
+            <div
+                id="fileName"
+                class="file-name"
             >
-                <option value="3">3 Results</option>
-                <option value="5" selected>5 Results</option>
-                <option value="10">10 Results</option>
-            </select>
+                No file selected
+            </div>
+
 
             <button
-                id="searchButton"
-                class="search-button"
+                id="analyzeButton"
+                class="analyze-button"
+                disabled
             >
-                Search
+                <span>✦</span>
+                Analyze Contract
             </button>
 
-        </div>
 
-        <div
-            id="searchLoading"
-            class="search-loading hidden"
+            <div
+                id="loading"
+                class="loading hidden"
+            >
+                <div class="loading-orbit">
+                    <div class="spinner"></div>
+                </div>
+
+                <div>
+                    <strong>AI is analyzing your contract</strong>
+                    <span>
+                        Detecting clauses and calculating risk...
+                    </span>
+                </div>
+            </div>
+
+
+            <div
+                id="errorMessage"
+                class="error-message hidden"
+            ></div>
+
+
+            <div class="upload-security">
+
+                <span>🔒</span>
+
+                <span>
+                    PDF processing • Clause detection • Risk analysis
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- Feature Strip -->
+        <section class="feature-strip">
+
+            <div class="feature-item">
+                <span class="feature-icon">🧠</span>
+                <div>
+                    <strong>AI Analysis</strong>
+                    <small>Intelligent processing</small>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <span class="feature-icon">⚠️</span>
+                <div>
+                    <strong>Risk Detection</strong>
+                    <small>Explainable scoring</small>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <span class="feature-icon">🔎</span>
+                <div>
+                    <strong>Semantic Search</strong>
+                    <small>Natural-language queries</small>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <span class="feature-icon">📊</span>
+                <div>
+                    <strong>Analytics</strong>
+                    <small>Structured insights</small>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- Semantic Search -->
+        <section class="panel search-panel">
+
+            <div class="panel-header search-header">
+
+                <div class="section-icon">
+                    🔎
+                </div>
+
+                <div>
+
+                    <div class="eyebrow">
+                        AI CONTRACT SEARCH
+                    </div>
+
+                    <h3>
+                        Ask your contract anything
+                    </h3>
+
+                    <p class="search-description">
+                        Search contract sections using natural language
+                        and semantic similarity.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="search-box">
+
+                <div class="search-input-wrapper">
+
+                    <span class="search-input-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="searchQuery"
+                        class="search-input"
+                        placeholder="e.g. Who owns the intellectual property?"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <select
+                    id="searchTopK"
+                    class="search-select"
+                    aria-label="Number of search results"
+                >
+                    <option value="3">
+                        3 Results
+                    </option>
+
+                    <option value="5" selected>
+                        5 Results
+                    </option>
+
+                    <option value="10">
+                        10 Results
+                    </option>
+                </select>
+
+
+                <button
+                    id="searchButton"
+                    class="search-button"
+                >
+                    Search
+                    <span>→</span>
+                </button>
+
+            </div>
+
+
+            <div
+                id="searchLoading"
+                class="search-loading hidden"
+            >
+                <div class="mini-spinner"></div>
+                Searching contract intelligence...
+            </div>
+
+
+            <div
+                id="searchError"
+                class="search-error hidden"
+            ></div>
+
+
+            <div
+                id="searchResults"
+                class="search-results"
+            ></div>
+
+        </section>
+
+
+        <!-- Results -->
+        <section
+            id="results"
+            class="results hidden"
         >
-            Searching contract...
-        </div>
 
-        <div
-            id="searchError"
-            class="search-error hidden"
-        ></div>
+            <!-- Analysis Heading -->
+            <div class="section-heading">
 
-        <div
-            id="searchResults"
-            class="search-results"
-        ></div>
+                <div>
 
-    </section>
+                    <div class="eyebrow">
+                        ANALYSIS COMPLETE
+                    </div>
 
+                    <h2>
+                        Contract Intelligence Report
+                    </h2>
 
-    <!-- Results -->
-    <section id="results" class="results hidden">
+                    <p id="analyzedFile"></p>
 
-        <div class="section-heading">
-            <div>
-                <h2>Contract Analysis</h2>
-                <p id="analyzedFile"></p>
-            </div>
-        </div>
+                </div>
 
+                <div class="analysis-status">
+                    <span class="status-dot"></span>
+                    Analysis Complete
+                </div>
 
-        <!-- Summary Cards -->
-        <div class="summary-grid">
-
-            <div class="summary-card risk-score-card">
-                <span class="card-label">Risk Score</span>
-                <strong id="riskScore">--</strong>
-                <span class="card-subtitle">out of 100</span>
             </div>
 
-            <div class="summary-card">
-                <span class="card-label">Risk Level</span>
-                <strong id="riskLevel">--</strong>
-                <span class="card-subtitle">Overall assessment</span>
+
+            <!-- Summary Cards -->
+            <div class="summary-grid">
+
+
+                <!-- Risk Score -->
+                <div class="summary-card risk-score-card">
+
+                    <div class="summary-card-top">
+                        <span class="card-label">
+                            RISK SCORE
+                        </span>
+
+                        <span class="summary-icon danger-icon">
+                            ⚠
+                        </span>
+                    </div>
+
+                    <strong id="riskScore">
+                        --
+                    </strong>
+
+                    <div class="score-bar">
+                        <span></span>
+                    </div>
+
+                    <span class="card-subtitle">
+                        Overall contract risk
+                    </span>
+
+                </div>
+
+
+                <!-- Risk Level -->
+                <div class="summary-card">
+
+                    <div class="summary-card-top">
+
+                        <span class="card-label">
+                            RISK LEVEL
+                        </span>
+
+                        <span class="summary-icon warning-icon">
+                            ◈
+                        </span>
+
+                    </div>
+
+                    <strong
+                        id="riskLevel"
+                        class="risk-value"
+                    >
+                        --
+                    </strong>
+
+                    <span class="card-subtitle">
+                        Overall assessment
+                    </span>
+
+                </div>
+
+
+                <!-- Clauses -->
+                <div class="summary-card">
+
+                    <div class="summary-card-top">
+
+                        <span class="card-label">
+                            CLAUSES DETECTED
+                        </span>
+
+                        <span class="summary-icon accent-icon">
+                            ◫
+                        </span>
+
+                    </div>
+
+                    <strong id="clauseCount">
+                        --
+                    </strong>
+
+                    <span class="card-subtitle">
+                        Total detections
+                    </span>
+
+                </div>
+
+
+                <!-- Types -->
+                <div class="summary-card">
+
+                    <div class="summary-card-top">
+
+                        <span class="card-label">
+                            CLAUSE TYPES
+                        </span>
+
+                        <span class="summary-icon success-icon">
+                            ◉
+                        </span>
+
+                    </div>
+
+                    <strong id="uniqueClauseCount">
+                        --
+                    </strong>
+
+                    <span class="card-subtitle">
+                        Unique categories
+                    </span>
+
+                </div>
+
             </div>
 
-            <div class="summary-card">
-                <span class="card-label">Clauses Detected</span>
-                <strong id="clauseCount">--</strong>
-                <span class="card-subtitle">Total detections</span>
-            </div>
 
-            <div class="summary-card">
-                <span class="card-label">Clause Types</span>
-                <strong id="uniqueClauseCount">--</strong>
-                <span class="card-subtitle">Unique categories</span>
-            </div>
+            <!-- Risk Assessment -->
+            <section class="panel">
 
-        </div>
+                <div class="panel-header">
+
+                    <div class="section-icon danger-panel-icon">
+                        ⚠
+                    </div>
+
+                    <div>
+
+                        <div class="eyebrow">
+                            RISK INTELLIGENCE
+                        </div>
+
+                        <h3>
+                            Risk Assessment
+                        </h3>
+
+                        <p>
+                            Factors contributing to the contract risk score.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="riskFactors"
+                    class="risk-factors"
+                ></div>
+
+            </section>
 
 
-        <!-- Risk Assessment -->
-        <section class="panel">
+            <!-- Detected Clauses -->
+            <section class="panel">
 
-            <div class="panel-header">
-                <h3>Risk Assessment</h3>
-            </div>
+                <div class="panel-header">
 
-            <div id="riskFactors" class="risk-factors"></div>
+                    <div class="section-icon">
+                        ◫
+                    </div>
+
+                    <div>
+
+                        <div class="eyebrow">
+                            NLP CLAUSE DETECTION
+                        </div>
+
+                        <h3>
+                            Detected Clauses
+                        </h3>
+
+                        <p>
+                            Contract clauses identified by the analysis pipeline.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="detectedClauses"
+                    class="clauses-container"
+                ></div>
+
+            </section>
+
+
+            <!-- Download -->
+            <section class="download-section">
+
+                <button
+                    id="downloadButton"
+                    class="download-button"
+                >
+                    <span>↓</span>
+                    Download Analysis Report
+                </button>
+
+            </section>
 
         </section>
 
-
-        <!-- Detected Clauses -->
-        <section class="panel">
-
-            <div class="panel-header">
-                <h3>Detected Clauses</h3>
-            </div>
-
-            <div id="detectedClauses" class="clauses-container"></div>
-
-        </section>
+    </main>
 
 
-        <!-- Download -->
-        <section class="download-section">
+    <!-- Footer -->
+    <footer>
 
-            <button
-                id="downloadButton"
-                class="download-button"
-            >
-                Download Analysis Report
-            </button>
+        <div class="footer-brand">
+            <span>⚡</span>
+            ContractAI
+        </div>
 
-        </section>
+        <p>
+            AI-Powered Contract Intelligence & Risk Scoring
+        </p>
 
-    </section>
+        <span class="footer-tech">
+            NLP
+            <i>•</i>
+            Clause Detection
+            <i>•</i>
+            Semantic Search
+            <i>•</i>
+            Explainable Risk Analysis
+        </span>
 
-</main>
+        <div class="footer-line"></div>
+
+        <small>
+            Intelligent contract analysis platform
+        </small>
+
+    </footer>
 
 
-<!-- Footer -->
-<footer>
-    <p>
-        AI-Powered Contract Intelligence & Risk Scoring
-    </p>
-    <span>
-        NLP • Clause Detection • Semantic Search • Explainable Risk Analysis
-    </span>
-</footer>
-
-
-<script src="/static/script.js"></script>
-
+    <script src="/static/script.js"></script>
 
 </body>
 </html>
